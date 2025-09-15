@@ -1,92 +1,3 @@
-# import pandas as pd
-# import numpy as np
-# import joblib
-# import os
-
-# # === PARAMÈTRES ===
-# files_path = "./Data/Mixed Dataset/"
-# acc_file = os.path.join(files_path, "joined_ACC.csv")
-# gyr_file = acc_file.replace("ACC", "GYR")
-# hit_times_file = os.path.join(files_path, "metadata.csv")
-# model_path = "random_forest_model.pkl"
-
-# # Vérification de l'existence des fichiers
-# if not all(os.path.exists(f) for f in [acc_file, gyr_file, hit_times_file, model_path]):
-#     raise FileNotFoundError("One or several files are not found. Please check your path.")
-
-# # === CHARGEMENT DES DONNÉES ===
-# df_acc = pd.read_csv(acc_file)
-# df_gyr = pd.read_csv(gyr_file)
-# hit_times_df = pd.read_csv(hit_times_file)
-
-# # Chargement du modèle Random Forest
-# model = joblib.load(model_path)
-
-# # === FONCTION D'EXTRACTION DE FEATURES ===
-# def extract_features(acc_segment, gyr_segment):
-#     acc = acc_segment[["ACC_X", "ACC_Y", "ACC_Z"]].to_numpy()
-#     gyr = gyr_segment[["GYR_X", "GYR_Y", "GYR_Z"]].to_numpy()
-#     min_len = min(len(acc), len(gyr))
-#     acc = acc[:min_len]
-#     gyr = gyr[:min_len]
-#     combined = np.hstack([acc, gyr])
-#     return np.concatenate([combined.mean(axis=0), combined.std(axis=0)])
-
-
-
-# # === DICTIONNAIRE DES LABELS ===
-# label_names = {
-#     0: "Dretes",
-#     1: "Reves",
-#     2: "Serve",
-#     3: "Smash",
-#     4: "VD",
-#     5: "VR"
-# }
-
-# # === RÉCUPÉRATION DES PAIRES DE LIGNES ===
-# lines = list(hit_times_df["Line_Number"])
-# hit_pairs = [(lines[i], lines[i + 1]) for i in range(len(lines) - 1)]
-
-# # === PRÉDICTIONS ===
-# predictions = []
-
-# for start_line, end_line in hit_pairs:
-#     mask = (df_acc["Line_Number"] >= start_line) & (df_acc["Line_Number"] < end_line)
-#     acc_seg = df_acc[mask]
-#     gyr_seg = df_gyr[mask]
-
-#     if len(acc_seg) == 0 or len(gyr_seg) == 0:
-#         predictions.append("Unknown")
-#         print(f"[WARNING] Empty between lines {start_line}-{end_line}")
-#         continue
-
-#     feat = extract_features(acc_seg, gyr_seg).reshape(1, -1)
-#     pred_label = model.predict(feat)[0]
-#     predictions.append(label_names.get(pred_label, "Unknown"))
-
-# # === EXTRACTION DES VRAIS LABELS ===
-# true_labels = []
-# for acc_file_path in hit_times_df["acc_file"][:-1]:  # On ignore la dernière ligne "END"
-#     folder = acc_file_path.split("/")[-2]  # Ex: 'J1 Serve ACC'
-#     label = folder.replace("ACC", "").strip().split()[-1]  # Ex: 'Serve'
-#     true_labels.append(label)
-
-# # === AFFICHAGE ET ÉVALUATION ===
-# correct = 0
-# total = len(true_labels)
-
-# print("\n--- Prediction results ---\n")
-
-# for i, (start_line, end_line), pred, true in zip(range(total), hit_pairs, predictions, true_labels):
-#     result = "✅" if pred == true else "❌"
-#     if pred == true:
-#         correct += 1
-#     print(f"Stroke {i+1:02d} | Lines: {start_line}-{end_line} | Prediction: {pred:<7} | True: {true:<7} {result}")
-
-# accuracy = (correct / total) * 100 if total > 0 else 0
-# print(f"\n🎯 Modele accuracy : {accuracy:.2f}% ({correct}/{total} accurate)")
-
 import pandas as pd
 import numpy as np
 import torch
@@ -95,7 +6,7 @@ import os
 from sklearn.metrics import accuracy_score
 
 # Parameters
-files_path = "./Data/Mixed Dataset/Match Set J4/"
+files_path = "./Data/Mixed Dataset/Match Set J6/"
 acc_file = os.path.join(files_path, "joined_ACC.csv")
 gyr_file = acc_file.replace("ACC", "GYR")
 hit_times_file = os.path.join(files_path, "metadata.csv")
@@ -117,27 +28,27 @@ class CNN1D(nn.Module):
     def __init__(self, n_classes=6):
         super(CNN1D, self).__init__()
         self.cnn = nn.Sequential(
-            nn.Conv1d(6, 64, kernel_size=5, padding=2),
-            nn.BatchNorm1d(64),
-            nn.ReLU(),
-            nn.MaxPool1d(2),
+            nn.Conv1d(6, 32, kernel_size=5, padding=2),      # cnn.0
+            nn.BatchNorm1d(32),                              # cnn.1
+            nn.ReLU(),                                       # cnn.2
+            nn.MaxPool1d(2),                                 # cnn.3
 
-            nn.Conv1d(64, 128, kernel_size=5, padding=2),
-            nn.BatchNorm1d(128),
-            nn.ReLU(),
-            nn.MaxPool1d(2),
+            nn.Conv1d(32, 64, kernel_size=5, padding=2),     # cnn.4
+            nn.BatchNorm1d(64),                              # cnn.5
+            nn.ReLU(),                                       # cnn.6
+            nn.MaxPool1d(2),                                 # cnn.7
 
-            nn.Conv1d(128, 256, kernel_size=5, padding=2),
-            nn.BatchNorm1d(256),
-            nn.ReLU(),
-            nn.AdaptiveMaxPool1d(1),
+            nn.Conv1d(64, 128, kernel_size=5, padding=2),    # cnn.8
+            nn.BatchNorm1d(128),                             # cnn.9
+            nn.ReLU(),                                       # cnn.10
+            nn.AdaptiveMaxPool1d(1),                         # cnn.11
         )
         self.fc = nn.Sequential(
-            nn.Flatten(),
-            nn.Linear(256, 128),
-            nn.ReLU(),
-            nn.Dropout(0.5),
-            nn.Linear(128, n_classes)
+            nn.Flatten(),                                    # fc.0
+            nn.Linear(128, 64),                              # fc.1
+            nn.ReLU(),                                       # fc.2
+            nn.Dropout(0.6),                                 # fc.3
+            nn.Linear(64, n_classes)                         # fc.4
         )
 
     def forward(self, x):
