@@ -48,6 +48,8 @@ Other data have been used to do an audio detection of the hits, which can be .mp
 
 **Code Description**
 
-- 
+- training_pytorch.py : This is the final algorithm that I used to train a Machine Learning model detecting the strokes. It returns a trained model that can be used in other files.
+- stroke_detection.py : This file was used to test the model trained in the previous file : it returns the 
+- create_match_set.py : This file allows to create a fake match-alike file, using the ori 
 
 
