@@ -3,7 +3,7 @@
 This project was developed as part of an engineering internship, with the aim of analyzing muscle use during tennis practice using inertial sensor data (accelerometer and gyroscope).
 The goal is to detect the type of stroke performed (forehand, backhand, serve, etc.) so that experts cant then study the muscle groups mostly impacted based on strokes frequency.
 
-# Objectives :
+## Objectives :
 
 - Collect motion data using a smartwatch (accelerometer + gyroscope)
 - Apply Machine Learning techniques to classify different tennis strokes
@@ -12,7 +12,7 @@ The goal is to detect the type of stroke performed (forehand, backhand, serve, e
 
 N.B. : This project could not be achieved completely, since the real match data was never sent.
 
-# Description :
+## Description :
 
 The main dataset that has been used for this project was composed of many files containing series of repeated strokes, from different players.
 It was constructed like this :
