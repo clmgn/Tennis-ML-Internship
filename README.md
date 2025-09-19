@@ -48,8 +48,21 @@ Other data have been used to do an audio detection of the hits, which can be .mp
 
 **Code Description**
 
-- training_pytorch.py : This is the final algorithm that I used to train a Machine Learning model detecting the strokes. It returns a trained model that can be used in other files.
-- stroke_detection.py : This file was used to test the model trained in the previous file : it returns the 
-- create_match_set.py : This file allows to create a fake match-alike file, using the ori 
+Using motion data :
+
+- separating_hits.py : This file was used to cut the original csv files into several smaller files containing single strokes. It made training a model easier.
+- training_pytorch.py : This is the final algorithm that I used to train a Machine Learning model detecting the strokes. It returns a trained model that can be used in other files, as well as a confusion matrix showing the test results.
+- stroke_detection.py : This file was used to test the model trained in the previous file : for one specific stroke file, it returns what type of stroke it is and with what probability.
+- create_match_set.py : This file allows to create a fake match-alike file, using the already separated strokes. The code can be modified to select from which player the files should be taken. It returns three different csv files : one containing the accelerometer data, an other containing the gyroscop data, and a final one, containing the lines where a stroke ends and a new one start, as well as the type of stroke for each one.
+- test_match.py : This file allows to try using the model on what should be a recorded match. For each stroke, it prints the prediction and what it really is. It then calculates the purcentage of accuracy of the prediction.
+
+
+Using audio files :
+
+- cut_long_audio_file.py : This code will detect if the intensity of the sound does not exceed a specific treshold for too long, then the initial file will be cut in small files.
+- detecting_hits_audio.py : This file shows the norm of the audio signal, points the strokes that have been detected and prints the number of strokes detected in one file.
+
+
+
 
 
