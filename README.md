@@ -14,7 +14,7 @@ N.B. : This project could not be achieved completely, since the real match data 
 
 # Description :
 
-The dataset that has been used for this project was composed of many files containing series of repeated strokes, from different players.
+The main dataset that has been used for this project was composed of many files containing series of repeated strokes, from different players.
 It was constructed like this :
 
 <pre> Data/
@@ -44,5 +44,10 @@ It was constructed like this :
 ...
 └── Jugador 6/ </pre>
 
+Other data have been used to do an audio detection of the hits, which can be .mp3 or .wav files, and downloaded from youtube.
+
+**Code Description**
+
+- 
 
 
